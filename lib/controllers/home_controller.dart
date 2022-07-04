@@ -35,4 +35,5 @@ class HomeController extends GetxController {
   void deleteItem(String id) {
     FirebaseFirestore.instance.collection(kCollectionName).doc(id).delete();
   }
+  
 }

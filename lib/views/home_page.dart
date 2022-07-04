@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutterfire_cart/controllers/home_controller.dart';
+import 'package:flutterfire_cart/models/item.dart';
 import 'package:get/get.dart';
 import 'add_cart_item_page.dart';
 
@@ -17,19 +18,7 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              isDismissible: true,
-              builder: (context) => DraggableScrollableSheet(
-                  initialChildSize: 0.75, //set this as you want
-                  maxChildSize: 0.75, //set this as you want
-                  minChildSize: 0.75, //set this as you want
-                  expand: true,
-                  builder: (context, scrollController) {
-                    return Container(child: AddCartItemPage());
-                  }));
+          buildAEPage(context,Item(id: '', pName: '', pQuantity: ''));
         },
         child: const Icon(Icons.add),
       ),
@@ -37,15 +26,32 @@ class HomePage extends StatelessWidget {
         () => ListView.builder(
           itemBuilder: (context, index) {
             return Slidable(
-              endActionPane: ActionPane(motion: ScrollMotion(), children: [
-                SlidableAction(onPressed: (_) {
-                  c.deleteItem(c.cartItems.elementAt(index).id);
-                },
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
-                icon: Icons.delete,
-                label: 'Delete',
-                spacing: 4,
+              startActionPane:
+                  ActionPane(motion: const ScrollMotion(), children: [
+                SlidableAction(
+                  onPressed: (_) {
+                    buildAEPage(context,
+                    c.cartItems.elementAt(index),
+                        title: "Update",);
+                  },
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 0, 150, 67),
+                  icon: Icons.delete,
+                  label: 'Edit',
+                  spacing: 4,
+                ),
+              ]),
+              endActionPane:
+                  ActionPane(motion: const ScrollMotion(), children: [
+                SlidableAction(
+                  onPressed: (_) {
+                    c.deleteItem(c.cartItems.elementAt(index).id);
+                  },
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                  icon: Icons.delete,
+                  label: 'Delete',
+                  spacing: 4,
                 ),
               ]),
               child: ListTile(
@@ -58,5 +64,29 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<dynamic> buildAEPage(
+    BuildContext context,
+    Item item,
+    {
+    String title = "Add",
+  }) {
+    return showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) => DraggableScrollableSheet(
+            initialChildSize: 0.75, //set this as you want
+            maxChildSize: 0.75, //set this as you want
+            minChildSize: 0.75, //set this as you want
+            expand: true,
+            builder: (context, scrollController) {
+              return AddCartItemPage(
+                title: title,
+                item: item,
+              );
+            }));
   }
 }

@@ -9,9 +9,14 @@ class AddCartItemController extends GetxController {
   TextEditingController quantityC = TextEditingController();
 
   additems() {
-    print(nameC.text);
     var item = Item(
         id: 'id', pName: nameC.text.trim(), pQuantity: quantityC.text.trim());
     FirebaseFirestore.instance.collection(kCollectionName).add(item.toMap());
+  }
+
+  void updateItem(Item id) {
+    var item = Item(
+        id: id.id, pName: nameC.text.trim(), pQuantity: quantityC.text.trim());
+    FirebaseFirestore.instance.collection(kCollectionName).doc(id.id).set(item.toMap());
   }
 }
